@@ -1,0 +1,35 @@
+// Array to store blocked URLs
+const blockedUrls = [];
+
+// Function to show a prompt to the user asking if they want to allow the ad
+const showPrompt = (url) => {
+  return confirm(`Do you want to allow this ad?\nURL: ${url}`);
+};
+
+// Function to handle incoming requests
+const handleRequest = (event) => {
+  // Check if the URL is in the blockedUrls array
+  if (blockedUrls.includes(event.url)) {
+    // If it is, show a prompt to the user asking if they want to allow the ad
+    if (!showPrompt(event.url)) {
+      event.preventDefault();
+    }
+  }
+};
+
+// Function to handle user's response to the prompt
+const handleResponse = (event) => {
+  // If the user has allowed the ad, remove it from the blockedUrls array
+  if (event.data.action === "allow") {
+    const index = blockedUrls.indexOf(event.data.url);
+    if (index > -1) {
+      blockedUrls.splice(index, 1);
+    }
+  }
+};
+
+// Listen for incoming requests
+window.addEventListener("beforeload", handleRequest);
+
+// Listen for user's response to the prompt
+window.addEventListener("message", handleResponse);
